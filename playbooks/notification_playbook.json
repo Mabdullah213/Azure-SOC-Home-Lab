@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2019-05-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "triggers": {
+    "When_a_Sentinel_incident_is_created": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {}
+    }
+  },
+  "actions": {
+    "Send_Email_Alert": {
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connectionName": "office365",
+          "operationId": "SendEmail",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+        },
+        "parameters": {
+          "to": "soc-team@example.com",
+          "subject": "🚨 Sentinel Alert Triggered",
+          "body": "A new alert has been triggered in Microsoft Sentinel. Please review the incident details in the Sentinel portal."
+        }
+      },
+      "runAfter": {}
+    }
+  },
+  "outputs": {}
+}

@@ -1,0 +1,10 @@
+// Privilege Escalation Detection
+// Detects when a user is added to a privileged Azure AD role
+
+AuditLogs
+| where OperationName == "Add member to role"
+| extend RoleName = tostring(TargetResources[0].displayName)
+| where RoleName in ("Global Administrator", "Privileged Role Administrator", "User Administrator")
+| project TimeGenerated, InitiatedBy = tostring(InitiatedBy.user.userPrincipalName), 
+          AddedUser = tostring(TargetResources[0].modifiedProperties[0].newValue), RoleName
+| extend AlertSeverity = "High", AlertDescription = "User added to privileged Azure AD role"

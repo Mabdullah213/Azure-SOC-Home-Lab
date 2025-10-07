@@ -1,0 +1,12 @@
+// Token Theft Detection
+// Detects impossible travel or token use from unusual locations
+
+SigninLogs
+| project UserPrincipalName, IPAddress, Location, TimeGenerated
+| sort by UserPrincipalName asc, TimeGenerated asc
+| extend PrevLocation = prev(Location), PrevTime = prev(TimeGenerated)
+| where UserPrincipalName == prev(UserPrincipalName)
+| extend TimeDiff = datetime_diff('minute', TimeGenerated, PrevTime)
+| where PrevLocation != Location and TimeDiff < 60
+| project TimeGenerated, UserPrincipalName, PrevLocation, Location, TimeDiff
+| extend AlertSeverity = "High", AlertDescription = "Possible token theft detected (impossible travel)"

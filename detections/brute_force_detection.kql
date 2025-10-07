@@ -1,0 +1,9 @@
+// Brute Force Login Detection
+// Detects multiple failed logins from the same IP in a short time window
+
+SigninLogs
+| where ResultType != 0
+| summarize FailedAttempts = count() by IPAddress, UserPrincipalName, bin(TimeGenerated, 10m)
+| where FailedAttempts >= 5
+| project TimeGenerated, UserPrincipalName, IPAddress, FailedAttempts
+| extend AlertSeverity = "Medium", AlertDescription = "Multiple failed logins detected from a single IP"

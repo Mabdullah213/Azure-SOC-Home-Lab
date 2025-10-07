@@ -1,0 +1,48 @@
+
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2019-05-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "triggers": {
+    "When_a_Sentinel_incident_is_created": {
+      "type": "Request",
+      "kind": "Http",
+      "inputs": {}
+    }
+  },
+  "actions": {
+    "Get_Entity_Information": {
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connectionName": "microsoftsentinel",
+          "operationId": "GetIncidentEntities",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoftsentinel"
+        },
+        "parameters": {
+          "IncidentId": "@triggerBody()?['IncidentId']"
+        }
+      },
+      "runAfter": {}
+    },
+    "Save_Evidence_To_Blob": {
+      "type": "ApiConnection",
+      "inputs": {
+        "host": {
+          "connectionName": "azureblob",
+          "operationId": "createFile",
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_azureblob"
+        },
+        "parameters": {
+          "path": "evidence/@{utcNow('yyyy-MM-ddTHHmmssZ')}.json",
+          "body": "@actions('Get_Entity_Information').outputs.body"
+        }
+      },
+      "runAfter": {
+        "Get_Entity_Information": [
+          "Succeeded"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}
