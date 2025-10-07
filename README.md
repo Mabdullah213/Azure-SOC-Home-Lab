@@ -19,7 +19,8 @@ The goal of this project is to build a functional **SOC environment** in Azure t
   - Isolate compromised users or devices  
   - Gather forensic evidence automatically  
   - Notify the SOC team for investigation
-  While I did use the visual tool found in Sentinel, I have made some Playboks that can be copied to the 'Code View', and used.
+
+**While I did use the visual tool found in Sentinel, I have made some Playboks that can be copied to the 'Code View', and used.**
 
 ---
 
